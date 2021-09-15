@@ -1,7 +1,10 @@
 $This is a comment
-level_name                      = ugu bruh lol
-gayass                          = This wont be read bruh
-command_block_enabled           = true
-Bruh                            = you gay
-test                            = Hello World!
-bruh                            = lol
+test = Hello World! 
+test_comment_at_value = Hey! $Comment must own a line, or else it will be a part of value
+compile_enabled       = true
+hello                 =  123
+weller man = Space at name will be ignored, so to get the value of the 'weller man', you have to use 'wellerman' instead of 'weller man'.
+$            If you want to use something to represent space, recommended to use _ instead. Any Symbol and alphabet for name is acceptable except equal and space
+
+$Any Symbol and alphabet is accept for value, value of 'happy_coding' will be '= Hi'
+happy_coding = = Hi
