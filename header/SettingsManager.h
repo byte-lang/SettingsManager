@@ -71,7 +71,7 @@ namespace SettingsManager
                             throw std::runtime_error("Settings::Error}> On line " + line + ", Value expected.");
                         }
                         std::string tempvalue = value.substr(0, valuepos);
-                        tempvalue.erase(remove(tempvalue.begin(), tempvalue.end(), ' '), tempvalue.end());
+                        tempvalue.erase(tempvalue.remove(tempvalue.begin(), tempvalue.end(), ' '), tempvalue.end());
                         std::string tempvaluesub = value.substr(valuepos + 1);
                         size_t valuestr = tempvaluesub.find_first_not_of(" \n\r\t");
                         std::string tores = tempvalue + "\n" + value.substr(valuepos + valuestr + 1);
@@ -112,7 +112,7 @@ namespace SettingsManager
                         throw std::runtime_error("Settings::Error}> On line " + line + ", Value expected.");
                     }
                     std::string tempvalue = value.substr(0, valuepos);
-                    tempvalue.erase(remove(tempvalue.begin(), tempvalue.end(), ' '), tempvalue.end());
+                    tempvalue.erase(tempvalue.remove(tempvalue.begin(), tempvalue.end(), ' '), tempvalue.end());
                     if(tempvalue == name)
                         found = true;
                     else res.append(value + "\n");
@@ -217,7 +217,7 @@ namespace SettingsManager
                         throw std::runtime_error("Settings::Error}> On line " + line + ", Value expected.");
                     }
                     std::string tempvalue = value.substr(0, valuepos);
-                    tempvalue.erase(remove(tempvalue.begin(), tempvalue.end(), ' '), tempvalue.end());
+                    tempvalue.erase(tempvalue.remove(tempvalue.begin(), tempvalue.end(), ' '), tempvalue.end());
                     if(tempvalue == name)
                     {
                         found = true;
@@ -260,7 +260,7 @@ namespace SettingsManager
                     {
                         found = true;
                         std::string tempvalue = value.substr(0, valuepos);
-                        tempvalue.erase(remove(tempvalue.begin(), tempvalue.end(), ' '), tempvalue.end());
+                        tempvalue.erase(tempvalue.remove(tempvalue.begin(), tempvalue.end(), ' '), tempvalue.end());
                         std::string temp = tempvalue + "=" + valuechange;
                         value = temp;
                     }
