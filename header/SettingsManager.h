@@ -2,12 +2,14 @@
 #define SETTINGSMANAGER_H
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include <vector>
 namespace SettingsManager
 {
     struct Data {
         private:
             std::vector<std::string> split(std::string s,std::string delimiter) { std::vector<std::string> res;s+=delimiter;std::string word;int pos = s.find(delimiter);while (pos != std::string::npos) {    word = s.substr(0, pos);  res.push_back(word);   s.erase(0, pos + delimiter.length()); pos = s.find(delimiter);  }   res.push_back(s);  res.pop_back();return res;}
+
         public:
         std::vector<std::string> value;
         std::string operator[](std::string index) { 
@@ -18,8 +20,45 @@ namespace SettingsManager
             }
             throw std::runtime_error("Settings::Error}> Name '" + index + "' not found.");
         }
+        bool operator==(Data data)
+            {
+                int size = data.size();
+                if(size != value.size()) return false;
+                for(int i = 0; i < value.size(); i++)
+                {    
+                    std::cout << data[i] + ":" + value[i] << std::endl;
+                    if(data[i] != value[i]) 
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        bool operator!=(Data data)
+            {int size = data.size(); if(size != value.size()) return true;for(int i = 0; i < value.size(); i++){    if(data[i] != value[i]) return true;}return false;}
+        bool operator<(int index)
+            {if(value.size() < index) return true; else return false;}
+        bool operator>(int index)
+            {if(value.size() > index) return true; else return false;}
+        bool operator<=(int index)
+            {if(value.size() <= index) return true; else return false;}
+        bool operator>=(int index)
+            {if(value.size() >= index) return true; else return false;}
+        bool operator<(Data data)
+            {if(value.size() < data.size()) return true; else return false;}
+        bool operator>(Data data)
+            {if(value.size() > data.size()) return true; else return false;}
+        bool operator<=(Data data)
+            {if(value.size() <= data.size()) return true; else return false;}
+        bool operator>=(Data data)
+            {if(value.size() >= data.size()) return true; else return false;}
+        std::string operator[](size_t index) 
+        {
+            if(index >= value.size()) throw std::runtime_error("Settings::Error}> Index is out of bounds.");
+            return value[index].substr(value[index].find('\n') + 1);
+        }
         void operator<<(std::string index) { value.push_back(index); }
-        void print() {
+        void print_details() {
             std::cout << "----------------------------------------------------------------" << std::endl;
             for(int i = 0; i < value.size(); i++)
             std::cout << value[i] << "\n----------------------------------------------------------------"<< std::endl;
@@ -27,6 +66,7 @@ namespace SettingsManager
         Data(std::vector<std::string>);
         Data() : value() {}
         void clear() { value.clear(); }
+        size_t size() { return value.size(); }
     };
     Data::Data(std::vector<std::string> x) : value(x) {}
     struct Parse {
@@ -59,7 +99,7 @@ namespace SettingsManager
                         int rawvalue = value.find_first_not_of(" \t\r\n");
                         value = value.substr(rawvalue);
                         if(value[0] == '$') continue;
-                        auto valuepos = value.find("=");
+                        int valuepos = value.find("=");
                         if(valuepos == 0)
                         {
                             std::string line = std::to_string(i + 1);
@@ -71,7 +111,7 @@ namespace SettingsManager
                             throw std::runtime_error("Settings::Error}> On line " + line + ", Value expected.");
                         }
                         std::string tempvalue = value.substr(0, valuepos);
-                        tempvalue.erase(tempvalue.remove(tempvalue.begin(), tempvalue.end(), ' '), tempvalue.end());
+                        tempvalue.erase(std::remove_if(tempvalue.begin(), tempvalue.end(), isspace), tempvalue.end());
                         std::string tempvaluesub = value.substr(valuepos + 1);
                         size_t valuestr = tempvaluesub.find_first_not_of(" \n\r\t");
                         std::string tores = tempvalue + "\n" + value.substr(valuepos + valuestr + 1);
@@ -100,7 +140,7 @@ namespace SettingsManager
                     int rawvalue = value.find_first_not_of(" \t\r\n");
                     value = value.substr(rawvalue);
                     if(value[0] == '$') { res.append(value + "\n"); continue;}
-                    auto valuepos = value.find("=");
+                    int valuepos = value.find("=");
                     if(valuepos == 0)
                     {
                         std::string line = std::to_string(i + 1);
@@ -112,7 +152,7 @@ namespace SettingsManager
                         throw std::runtime_error("Settings::Error}> On line " + line + ", Value expected.");
                     }
                     std::string tempvalue = value.substr(0, valuepos);
-                    tempvalue.erase(tempvalue.remove(tempvalue.begin(), tempvalue.end(), ' '), tempvalue.end());
+                    tempvalue.erase(std::remove_if(tempvalue.begin(), tempvalue.end(), isspace), tempvalue.end());
                     if(tempvalue == name)
                         found = true;
                     else res.append(value + "\n");
@@ -170,7 +210,7 @@ namespace SettingsManager
                     int rawvalue = value.find_first_not_of(" \t\r\n");
                     value = value.substr(rawvalue);
                     if(value[0] == '$') { res.append(value + "\n"); continue;}
-                    auto valuepos = value.find("=");
+                    int valuepos = value.find("=");
                     if(valuepos == 0)
                     {
                         std::string line = std::to_string(i + 1);
@@ -205,7 +245,7 @@ namespace SettingsManager
                     int rawvalue = value.find_first_not_of(" \t\r\n");
                     value = value.substr(rawvalue);
                     if(value[0] == '$') { res.append(value + "\n"); continue;}
-                    auto valuepos = value.find("=");
+                    int valuepos = value.find("=");
                     if(valuepos == 0)
                     {
                         std::string line = std::to_string(i + 1);
@@ -217,7 +257,7 @@ namespace SettingsManager
                         throw std::runtime_error("Settings::Error}> On line " + line + ", Value expected.");
                     }
                     std::string tempvalue = value.substr(0, valuepos);
-                    tempvalue.erase(tempvalue.remove(tempvalue.begin(), tempvalue.end(), ' '), tempvalue.end());
+                    tempvalue.erase(std::remove_if(tempvalue.begin(), tempvalue.end(), isspace), tempvalue.end());
                     if(tempvalue == name)
                     {
                         found = true;
@@ -245,7 +285,7 @@ namespace SettingsManager
                     int rawvalue = value.find_first_not_of(" \t\r\n");
                     value = value.substr(rawvalue);
                     if(value[0] == '$') { res.append(value + "\n"); continue;}
-                    auto valuepos = value.find("=");
+                    int valuepos = value.find("=");
                     if(valuepos == 0)
                     {
                         std::string line = std::to_string(i + 1);
@@ -260,7 +300,7 @@ namespace SettingsManager
                     {
                         found = true;
                         std::string tempvalue = value.substr(0, valuepos);
-                        tempvalue.erase(tempvalue.remove(tempvalue.begin(), tempvalue.end(), ' '), tempvalue.end());
+                        tempvalue.erase(std::remove_if(tempvalue.begin(), tempvalue.end(), isspace), tempvalue.end());
                         std::string temp = tempvalue + "=" + valuechange;
                         value = temp;
                     }
